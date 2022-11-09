@@ -1,16 +1,18 @@
 <?php
 if (!empty($_REQUEST["TLoginId"]) && !empty($_REQUEST["PName"]) && !empty($_REQUEST["PPrice"]) && !empty($_REQUEST["PQuantity"])) {
-    $LoginId = $_REQUEST["TLoginId"];
+    $LoginId = (int) $_REQUEST["TLoginId"];
+    $PPrice = (int) $_REQUEST["PPrice"];
+    $PQuantity = (int) $_REQUEST["PQuantity"];
     $PName = $_REQUEST["PName"];
-    $PPrice = $_REQUEST["PPrice"];
-    $PQuantity = $_REQUEST["PQuantity"];
-    $LoginId = (int)str_replace(" ", "", "$LoginId");
-    $PPrice = (int)str_replace(" ", "", "$PPrice");
-    $PQuantity = (int)str_replace(" ", "", "$PQuantity");
-    $PName = str_replace(" ", "", "$PName");
-    if (strlen($LoginId) > $MinLoginIDLength && strlen($PPrice) >= $MinProductPriceLength && strlen($PQuantity) >= $MinProductQuantityLength && strlen($PName) > $MinProductNameLength) {
-        if (strlen($LoginId) < $MaxLoginIDLength && strlen($PPrice) <= $MaxProductPriceLength && strlen($PQuantity) <= $MaxProductQuantityLength && strlen($PName) < $MaxProductNameLength) {
+    
+    $PNameEmptySpacesCheck = str_replace(" ", "", "$PName");
+    if (strlen($LoginId) > $MinLoginIDLength && strlen($PPrice) >= $MinProductPriceLength && strlen($PQuantity) >= $MinProductQuantityLength && strlen($PNameEmptySpacesCheck) > $MinProductNameLength) {
+        if (strlen($LoginId) < $MaxLoginIDLength && strlen($PPrice) <= $MaxProductPriceLength && strlen($PQuantity) <= $MaxProductQuantityLength && strlen($PNameEmptySpacesCheck) < $MaxProductNameLength) {
             require ("DB_Connect.php");
+            $LoginId = Sanitise($conn, $LoginId);
+            $PName = Sanitise($conn, $PName);
+            $PPrice = Sanitise($conn, $PPrice);
+            $PQuantity = Sanitise($conn, $PQuantity);
             $sql = "SELECT * FROM customers WHERE `Login Id`='$LoginId'";
             $result = mysqli_query($conn, $sql);
             if (mysqli_num_rows($result) > 0) {

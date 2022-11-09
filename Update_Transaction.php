@@ -1,16 +1,17 @@
 <?php
 if (!empty($_REQUEST["InvoiceNumber"]) && !empty($_REQUEST["TUPName"]) && !empty($_REQUEST["TUPPrice"]) && !empty($_REQUEST["TUPQuantity"])) {
-    $InvoiceNumber = $_REQUEST["InvoiceNumber"];
+    $InvoiceNumber = (int) $_REQUEST["InvoiceNumber"];
     $PName = $_REQUEST["TUPName"];
-    $PPrice = $_REQUEST["TUPPrice"];
-    $PQuantity = $_REQUEST["TUPQuantity"];
-    $InvoiceNumber = (int)str_replace(" ", "", "$InvoiceNumber");
-    $PPrice = (int)str_replace(" ", "", "$PPrice");
-    $PQuantity = (int)str_replace(" ", "", "$PQuantity");
-    $PName = str_replace(" ", "", "$PName");
-    if (strlen($InvoiceNumber) > $MinInvoiceNumberLength && strlen($PPrice) >= $MinProductPriceLength && strlen($PQuantity) >= $MinProductQuantityLength && strlen($PName) > $MinProductNameLength) {
-        if (strlen($InvoiceNumber) < $MaxInvoiceNumberLength && strlen($PPrice) <= $MaxProductPriceLength && strlen($PQuantity) <= $MaxProductQuantityLength && strlen($PName) < $MaxProductNameLength) {
+    $PPrice = (int) $_REQUEST["TUPPrice"];
+    $PQuantity = (int) $_REQUEST["TUPQuantity"];
+    $PNameEmptySpacesCheck = str_replace(" ", "", "$PName");
+    if (strlen($InvoiceNumber) > $MinInvoiceNumberLength && strlen($PPrice) >= $MinProductPriceLength && strlen($PQuantity) >= $MinProductQuantityLength && strlen($PNameEmptySpacesCheck) > $MinProductNameLength) {
+        if (strlen($InvoiceNumber) < $MaxInvoiceNumberLength && strlen($PPrice) <= $MaxProductPriceLength && strlen($PQuantity) <= $MaxProductQuantityLength && strlen($PNameEmptySpacesCheck) < $MaxProductNameLength) {
             require ("DB_Connect.php");
+            $InvoiceNumber = Sanitise($conn, $InvoiceNumber);
+            $PName = Sanitise($conn, $PName);
+            $PPrice = Sanitise($conn, $PPrice);
+            $PQuantity = Sanitise($conn, $PQuantity);
             $sql = "SELECT * FROM transactions WHERE `Invoice Number`='$InvoiceNumber'";
             $result = mysqli_query($conn, $sql);
             if (mysqli_num_rows($result) > 0) {

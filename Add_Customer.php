@@ -1,14 +1,15 @@
 <?php
 if (!empty($_REQUEST["LoginId"]) && !empty($_REQUEST["Name"]) && !empty($_REQUEST["Phone"])) {
-    $LoginId = $_REQUEST["LoginId"];
+    $LoginId = (int) $_REQUEST["LoginId"];
+    $Phone = (int) $_REQUEST["Phone"];
     $Name = $_REQUEST["Name"];
-    $Phone = $_REQUEST["Phone"];
-    $LoginId = (int)str_replace(" ", "", "$LoginId");
-    $Name = str_replace(" ", "", "$Name");
-    $Phone = (int)str_replace(" ", "", "$Phone");
-    if (strlen($LoginId) > $MinLoginIDLength && strlen($Phone) > $MinPhoneNumberLength && strlen($Name) > $MinCustomerNameLength) {
-        if (strlen($LoginId) < $MaxLoginIDLength && strlen($Phone) < $MaxPhoneNumberLength && strlen($Name) < $MaxCustomerNameLength) {
-            require ("DB_Connect.php");
+    $NameEmptySpacesCheck = str_replace(" ", "", "$Name");
+    if (strlen($LoginId) > $MinLoginIDLength && strlen($Phone) > $MinPhoneNumberLength && strlen($NameEmptySpacesCheck) > $MinCustomerNameLength) {
+        if (strlen($LoginId) < $MaxLoginIDLength && strlen($Phone) < $MaxPhoneNumberLength && strlen($NameEmptySpacesCheck) < $MaxCustomerNameLength) {
+            require("DB_Connect.php");
+            $LoginId = Sanitise($conn, $LoginId);
+            $Name = Sanitise($conn, $Name);
+            $Phone = Sanitise($conn, $Phone);
             $sql = "SELECT * FROM customers WHERE `Login Id`='$LoginId'";
             $result = mysqli_query($conn, $sql);
             if (!mysqli_num_rows($result) > 0) {

@@ -1,9 +1,9 @@
 <?php
 if (!empty($_REQUEST["DeletTransaction"])) {
-    $InvoiceNumber = $_REQUEST["DeletTransaction"];
-    $InvoiceNumber = (int)str_replace(" ", "", "$InvoiceNumber");
+    $InvoiceNumber = (int) $_REQUEST["DeletTransaction"];
     if (strlen($InvoiceNumber) > $MinInvoiceNumberLength) {
         require ("DB_Connect.php");
+        $InvoiceNumber = Sanitise($conn, $InvoiceNumber);
         $sql = "SELECT * FROM transactions WHERE `Invoice Number`='$InvoiceNumber'";
         $result = mysqli_query($conn, $sql);
         if (mysqli_num_rows($result) > 0) {

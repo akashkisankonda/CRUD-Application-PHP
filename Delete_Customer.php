@@ -1,9 +1,9 @@
 <?php
 if (!empty($_REQUEST["DeletCustomer"])) {
-    $LoginId = $_REQUEST["DeletCustomer"];
-    $LoginId = str_replace(" ", "", "$LoginId");
+    $LoginId = (int) $_REQUEST["DeletCustomer"];
     if (strlen($LoginId) > $MinLoginIDLength) {
         require ("DB_Connect.php");
+        $LoginId = Sanitise($conn, $LoginId);
         $sql = "SELECT * FROM customers WHERE `Login Id`='$LoginId'";
         $result = mysqli_query($conn, $sql);
         if (mysqli_num_rows($result) > 0) {
